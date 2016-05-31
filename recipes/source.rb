@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+include_recipe 'build-essential'
 
 source_url = if node['imagemagick']['version']
                node['imagemagick']['source']['url']

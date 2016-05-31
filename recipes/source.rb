@@ -17,21 +17,38 @@
 # limitations under the License.
 #
 
-src_filepath = "#{Chef::Config['file_cache_path']}/#{::File.basename(node['imagemagick']['source']['url'])}"
+source_url = if node['imagemagick']['version']
+               node['imagemagick']['source']['url']
+             else
+               "http://www.imagemagick.org/download/ImageMagick.tar.gz"
+             end
+
+src_filepath = "#{Chef::Config['file_cache_path']}/#{::File.basename(source_url)}"
 src_extractpath = "#{::File.dirname(src_filepath)}/#{::File.basename(src_filepath, ".tar.gz")}"
 
 remote_file src_filepath do
-  source   node['imagemagick']['source']['url']
+  source   source_url
   checksum node['imagemagick']['source']['checksum']
   backup   false
 
   not_if { ::File.exists?(src_filepath) }
 end
 
-execute "extract-source-imagemagick" do
-  command "tar zxf #{src_filepath} -C #{::File.dirname(src_filepath)}"
+directory "mkdir-imagemagick" do
+  path src_extractpath
+  owner 'root'
+  group 'root'
+  mode '0755'
+  action :create
+  notifies :run, "execute[extract-source-imagemagick]", :immediately
 
   not_if { ::File.exists?(src_extractpath) }
+end
+
+execute "extract-source-imagemagick" do
+  command "tar zxf #{src_filepath} --strip-components 1 -C #{src_extractpath}"
+
+  action :nothing
 end
 
 execute "configure-imagemagick" do
@@ -39,7 +56,11 @@ execute "configure-imagemagick" do
   command "./configure"
   notifies :run, "execute[make-imagemagick]", :immediately
 
-  not_if "convert --version | grep #{node['imagemagick']['source']['version']}"
+  if node['imagemagick']['version']
+    not_if "convert --version | grep #{node['imagemagick']['version']}"
+  else
+    not_if "which convert"
+  end
 end
 
 execute "make-imagemagick" do

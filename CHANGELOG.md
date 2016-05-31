@@ -1,6 +1,11 @@
 Imagemagick CHANGELOG
 =====================
 
+v0.2.5 (2016-05-31)
+-------------------
+- Source recipe install latest version
+- Add build-essential depends
+
 v0.2.4 (2016-05-23)
 -------------------
 - Support install from source

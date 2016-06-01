@@ -18,6 +18,10 @@
 #
 include_recipe 'build-essential'
 
+package "libpng-dev"
+package "libjpeg-dev"
+package "libtiff-dev"
+
 source_url = if node['imagemagick']['version']
                node['imagemagick']['source']['url']
              else

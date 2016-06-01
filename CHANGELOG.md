@@ -1,6 +1,10 @@
 Imagemagick CHANGELOG
 =====================
 
+v0.2.6 (2016-06-01)
+-------------------
+- Support png, jpeg, tiff delegates
+ 
 v0.2.5 (2016-05-31)
 -------------------
 - Source recipe install latest version
